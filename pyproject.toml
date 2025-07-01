@@ -1,0 +1,119 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "livekit-plugins-yandex"
+dynamic = ["version"]
+description = "Agent Framework plugin for Yandex SpeechKit STT"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.9.0"
+authors = [{ name = "sergerdn", email = "root@localhost" }]
+keywords = ["webrtc", "realtime", "audio", "video", "livekit", "stt", "yandex", "speechkit"]
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Multimedia :: Video",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = [
+    "livekit-agents>=0.8.0",
+    "aiohttp>=3.8.0",
+    "grpcio>=1.50.0",
+    "grpcio-tools>=1.50.0",
+    "protobuf>=4.0.0",
+    "numpy>=1.20.0",
+    "yandexcloud>=0.348.0",
+    "tenacity>=8.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "python-dotenv==1.1.0",
+    "pytest==8.4.0",
+    "pytest-asyncio==1.0.0",
+    "pytest-mock==3.14.1",
+    "pytest-dependency==0.6.0",
+    "black==25.1.0",
+    "isort==6.0.1",
+    "flake8==7.2.0",
+    "pylint==3.3.7",
+    "mypy==1.16.0",
+    "docformatter==1.7.7",
+    # Type stubs for better type checking
+    "types-requests==2.32.4.20250611",
+    "types-setuptools==80.9.0.20250529",
+    "grpc-stubs==1.53.0.6",
+    "mypy-protobuf==3.6.0",
+]
+
+# Optional dependencies for test fixture generation
+fixtures = [
+    "pywin32==310; sys_platform == 'win32'",
+]
+
+[project.urls]
+Documentation = "https://github.com/sergerdn/livekit-plugins-yandex#readme"
+Repository = "https://github.com/sergerdn/livekit-plugins-yandex"
+Issues = "https://github.com/sergerdn/livekit-plugins-yandex/issues"
+"LiveKit Docs" = "https://docs.livekit.io"
+
+[tool.hatch.version]
+path = "livekit/plugins/yandex/version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["livekit"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/livekit"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+#known_first_party=["livekit", "livekit.plugins.yandex"]
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "aiohttp.*", # No official stubs available
+    "numpy.*", # Has built-in stubs
+    "livekit.*", # Third-party, no stubs
+    "yandex.*", # Third-party, no stubs
+    "dotenv.*", # Third-party, no stubs
+    "pytest.*", # Has built-in stubs
+    "wave.*", # Standard library should have stubs
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+# --ignore-unknown-dependency: Allows running individual tests without running their dependencies first
+# This is useful for development/debugging when you want to run a specific test in isolation
+#addopts = "-v --tb=short --ignore-unknown-dependency"
+#testpaths = ["tests"]
+#python_files = ["test_*.py"]
+#python_classes = ["Test*"]
+#python_functions = ["test_*"]
+markers = [
+    "unit: marks tests as unit tests (no external dependencies)",
+    "integration: marks tests as integration tests (requires credentials)",
+    "functional: marks tests as functional tests (requires credentials and audio)",
+    "e2e: marks tests as end-to-end tests (real API calls)",
+    "slow: marks tests as slow running",
+    "dependency: marks tests with dependencies on other tests",
+]
